@@ -6,12 +6,21 @@ FROM mcr.microsoft.com/java/jdk:13u1-zulu-ubuntu
 
 #RUN apt-get update && apt-get install -y vim
 
-COPY ./resources/*.tar.gz /root/
+RUN useradd -r elk
+RUN mkdir /home/elk
+RUN chown elk /home/elk
 
-RUN for tar in /root/*.tar.gz; do tar -zxvf $tar; done
+USER elk
+
+COPY ./resources/*.tar.gz /home/elk/
+
+WORKDIR /home/elk
+
+RUN for tar in *.tar.gz; do tar -zxvf $tar; done
+
+#RUN /home/elk/elasticsearch-7.4.2/bin/elasticsearch
 
 #RUN echo "elasticsearch.hosts" >> /root/kibana-7.4.2-linux-x86_64/config/kibana.yml
 #
-#RUN /root/elasticsearch-7.4.2/bin/elasticsearch
 #RUN /root/kibana-7.4.2-linux-x86_64/bin/kibana
 #RUN /root/logstash-7.4.2/bin/logstash -f logstash.conf
